@@ -1,10 +1,8 @@
 #include <WiFi.h>
 
-Struct WiFiWraps {
-  char *staSSID;
-  char *staPSK;
+struct WiFiWraps {
   bool connected;
-} WifiWrap;
+} WiFiWrap;
 
 void WiFiEvent(WiFiEvent_t event) {
   switch (event) {
@@ -13,16 +11,16 @@ void WiFiEvent(WiFiEvent_t event) {
       break;
     case ARDUINO_EVENT_WIFI_STA_DISCONNECTED:
       WiFiWrap.connected = false;
-      WiFi.begin(UDisPlay.udp.staSSID, UDisPlay.udp.staPSK);
+      WiFi.reconnect();
       break;
     default: break;
+  }
 }
 
-void WiFiWrapStart( char *SSID; char *PSK ) {
-  UDisPlay.staSSID = *SSID;
-  UDisPlay.staPSK = *PSK;
+void WiFiWrapStart( char *SSID, char *PSK) {
+  WiFiWrap.connected = false;
   WiFi.mode(WIFI_STA);
   WiFi.disconnect(true);
   WiFi.onEvent(WiFiEvent);
-  WiFi.begin(WiFiWrap.staSSID, WiFiWrap.staPSK);
+  WiFi.begin(SSID, PSK);
 }
